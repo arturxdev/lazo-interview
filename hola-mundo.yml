@@ -1,0 +1,8 @@
+name: Hola Mundo
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: run-script
+        uses: python test.py
