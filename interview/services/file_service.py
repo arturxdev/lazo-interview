@@ -21,7 +21,7 @@ class FileService:
     def download_file(self, url: str, type: str):
         try:
             url = url
-            destino = f"./src/data/{type}_2025-{uuid.uuid4()}.csv"
+            destino = f"./interview/data/{type}_2025-{uuid.uuid4()}.csv"
             import requests
             with open(destino, 'wb') as f:
                 response=requests.get(url)
