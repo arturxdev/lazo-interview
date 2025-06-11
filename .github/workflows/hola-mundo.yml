@@ -1,8 +1,13 @@
-name: Hola Mundo
+name: Financial Audit
+run-name: financial-audit
 on: [push]
 jobs:
-  build:
+  hola-mundo:
     runs-on: ubuntu-latest
     steps:
-      - name: run-script
-        uses: python test.py
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Definir variable
+        run: echo "USERNAME=${{ github.actor }}" >> $GITHUB_ENV
+      - name: Correr script
+        run: python hola_mundo.py
