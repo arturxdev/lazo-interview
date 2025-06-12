@@ -6,7 +6,7 @@ class FileService:
         pass
     def parse_csv(self, path: str):
         try:
-            return pd.read_csv(path)
+            pd.read_csv(path)
         except Exception as e:
             return str(e)
 

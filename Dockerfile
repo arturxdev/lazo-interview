@@ -12,7 +12,6 @@ WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./
 COPY interview ./interview
-COPY app.py ./app.py
 RUN chmod -R 777 /app/interview/data
 
 RUN touch README.md
@@ -21,5 +20,4 @@ RUN poetry install
 
 EXPOSE 3000
 
-# CMD ["poetry", "run", "flask", "run", "--host=0.0.0.0"]
-CMD ["poetry", "run", "gunicorn", "--bind", "0.0.0.0:3000", "app:app"]
+CMD ["poetry", "run", "gunicorn","--reload", "--bind", "0.0.0.0:3000", "interview.app:app"]
