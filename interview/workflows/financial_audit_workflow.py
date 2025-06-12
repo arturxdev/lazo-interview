@@ -1,14 +1,13 @@
-from beeai_framework.backend import ChatModel
 from beeai_framework.workflows import Workflow
 from pydantic import BaseModel, ConfigDict
-from typing import Optional, Any
+from typing import Optional
 from interview.services.file_service import FileService
 from interview.services.validation_service import ValidationService
-from interview.agents.auditor_agent import create_auditor_agent
-from beeai_framework.emitter import Emitter, EmitterOptions, EventMeta
-from beeai_framework.agents.react import  ReActAgentRunOutput
-from beeai_framework.backend import UserMessage
-from beeai_framework.adapters.anthropic import AnthropicChatModel
+from interview.agents.model import Model
+from interview.services.github_servide import GithubService
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 class FileConfig(BaseModel):
     url: Optional[str] = None
@@ -23,7 +22,8 @@ class ValidateDataState(BaseModel):
     errors: Optional[list[str]] = []
     files: Optional[list[FileConfig]] = []
 
-
+model = Model(is_production=os.getenv("IS_PRODUCTION"))
+print(f"Model: {model.get_model()}")
 
 def download_csv(state: ValidateDataState):
     print("📂 Descargando el archivo CSV...")
@@ -58,9 +58,8 @@ def validate_balance_data(state: ValidateDataState):
 async def make_report(state: ValidateDataState):
     print("🔍 Haciendo el reporte...")
     print("🔍 Iniciando auditoría del estado de resultados...\n")
+    github_service = GithubService(token=os.getenv("GITHUB_TOKEN"))
     
-    model = AnthropicChatModel()
-    # model = ChatModel.from_name("ollama:granite3.3:8b")
     prompt = f"""
         Act as a professional financial auditor and write a validation report for a business owner who will present these numbers to executives or investors.
 
@@ -91,16 +90,51 @@ async def make_report(state: ValidateDataState):
         errors:
         {", ".join(state.errors)}
     """
-    result = await model.create(messages=[UserMessage(prompt)])
+    result = await model.create(prompt)
     state.report = result.get_text_content()
     print(state.report)
     print("=======")
+    github_service.create_issue(title="Financial Audit Report", body=state.report)
     return Workflow.END
 
-def report_errors(state: ValidateDataState):
+async def report_errors(state: ValidateDataState):
     print("🔍 Reportando errores...")
-    for error in state.errors:
-        print(error)
+    github_service = GithubService(token=os.getenv("GITHUB_TOKEN"))
+    prompt = f"""
+        You are a professional financial auditor. You have received a list of accounting or financial inconsistencies.
+
+        Your task is to write a clear, concise, and professional report that can be easily understood by a business owner who may present this information to executives, investors, or internal stakeholders.
+
+        The report must be structured using exactly **three sections**:
+
+        ---
+
+        ❌ What’s Wrong  
+        Clearly and concisely explain what is incorrect or inconsistent in each case. Avoid technical jargon. Use plain business language and bullet points if helpful.
+
+        🛠️ How to Fix It  
+        Provide simple, actionable suggestions to address each issue described above. Be brief and direct — your goal is to help the business owner understand what needs to be done and why.
+
+        📊 Proof of Error  
+        Present specific data that demonstrates the problem. This could include:
+        - Numeric discrepancies (e.g., "Gross Profit = 60,000, but Revenue - COGS = 55,000")
+        - Trend anomalies (e.g., "Cash dropped 30% from Q2 to Q3")
+        - Mismatches between totals and line items
+        - URLs to the file and the line number of the error
+
+        Use this section to back up the issues raised with clear, direct evidence.
+
+        ---
+
+        Here is the data to validate:  
+        errors:
+
+        {", ".join(state.errors)}
+    """
+    result = await model.create(prompt)
+    state.report = result.get_text_content()
+    print(state.report)
+    github_service.create_issue(title="Financial has failed", body=state.report, labels=["invalid"])
     return Workflow.END
 
 
@@ -108,7 +142,7 @@ async def main_workflow(pnl_url: str,balance_url: str):
     print("Starting workflow...")
     workflow = Workflow(schema=ValidateDataState, name="CleanDataAgent")
     workflow.add_step("download_files", download_csv)
-    # workflow.add_step("parse_files", parse_csv)
+    workflow.add_step("parse_files", parse_csv)
     workflow.add_step("validate_pnl_data", validate_pnl_data)
     workflow.add_step("validate_balance_data", validate_balance_data)
     workflow.add_step("make_report", make_report)

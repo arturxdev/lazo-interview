@@ -3,10 +3,11 @@ version: '3.8'
 services:
   web:
     build: .
+    command: poetry run gunicorn --reload --bind 0.0.0.0:3000 interview.app:app
     ports:
       - "3000:3000"
     env_file:
       - .env
     volumes:
       - ./interview:/app/interview
-    restart: unless-stopped 
+      - ./app.py:/app/app.py
