@@ -3,6 +3,11 @@
 > [!NOTE]  
 > Si quieres probar esto en produccion la app esta deployanda en un server gratis primero entrar a esta pagina y esperar que cargue https://lazo-interview.onrender.com.
 
+
+https://github.com/user-attachments/assets/9920f646-98c6-4326-a27a-13cbbcd48678
+
+
+
 ## Instrucciones.
 
 1. Se necesitan las siguientes variables:
