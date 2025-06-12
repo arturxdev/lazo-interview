@@ -2,7 +2,7 @@ name: Financial Audit
 run-name: financial-audit
 on: [push]
 jobs:
-  hola-mundo:
+  make-audit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
