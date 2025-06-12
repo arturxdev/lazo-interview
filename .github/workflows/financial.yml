@@ -7,7 +7,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Build Docker image
-        run: docker build -t financial-audit .
-      - name: Run container
-        run: docker run -d -p 3000:3000 financial-audit
+      - name: Call Audit API
+        run: |
+          # Wait for the container to be ready
+          sleep 10
+          # Call the audit API
+          curl -X GET https://lazo-interview.onrender.com/audit
