@@ -3,9 +3,6 @@ from beeai_framework.backend import ChatModel
 from beeai_framework.tools import AnyTool
 from beeai_framework.memory import UnconstrainedMemory
 from typing import Any
-from src.tools.pnl_validator import ValidatorPNLTool
-from beeai_framework.template import PromptTemplateInput
-from pydantic import BaseModel
 
 def create_auditor_agent() -> ReActAgent:
     """

@@ -2,12 +2,13 @@ from beeai_framework.backend import ChatModel
 from beeai_framework.workflows import Workflow
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, Any
-from src.services.file_service import FileService
-from src.services.validation_service import ValidationService
-from src.agents.auditor_agent import create_auditor_agent
+from interview.services.file_service import FileService
+from interview.services.validation_service import ValidationService
+from interview.agents.auditor_agent import create_auditor_agent
 from beeai_framework.emitter import Emitter, EmitterOptions, EventMeta
 from beeai_framework.agents.react import  ReActAgentRunOutput
 from beeai_framework.backend import UserMessage
+from beeai_framework.adapters.anthropic import AnthropicChatModel
 
 class FileConfig(BaseModel):
     url: Optional[str] = None
@@ -58,7 +59,8 @@ async def make_report(state: ValidateDataState):
     print("🔍 Haciendo el reporte...")
     print("🔍 Iniciando auditoría del estado de resultados...\n")
     
-    model = ChatModel.from_name("ollama:granite3.3:8b")
+    model = AnthropicChatModel()
+    # model = ChatModel.from_name("ollama:granite3.3:8b")
     prompt = f"""
         Act as a professional financial auditor and write a validation report for a business owner who will present these numbers to executives or investors.
 
@@ -92,6 +94,7 @@ async def make_report(state: ValidateDataState):
     result = await model.create(messages=[UserMessage(prompt)])
     state.report = result.get_text_content()
     print(state.report)
+    print("=======")
     return Workflow.END
 
 def report_errors(state: ValidateDataState):
@@ -102,6 +105,7 @@ def report_errors(state: ValidateDataState):
 
 
 async def main_workflow(pnl_url: str,balance_url: str):
+    print("Starting workflow...")
     workflow = Workflow(schema=ValidateDataState, name="CleanDataAgent")
     workflow.add_step("download_files", download_csv)
     # workflow.add_step("parse_files", parse_csv)
