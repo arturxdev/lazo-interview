@@ -1,5 +1,8 @@
 # Autonomous Financial Auditor
 
+> [!NOTE]  
+> Si quieres probar esto en produccion la app esta deployanda en un server gratis primero entrar a esta pagina y esperar que cargue https://lazo-interview.onrender.com.
+
 ## Instrucciones
 
 1. Se necesitan las siguientes variables:
