@@ -1,9 +1,9 @@
 # Autonomous Financial Auditor
 
 > [!NOTE]  
-> Si quieres probar esto en produccion la app esta deployanda en un server gratis primero entrar a esta pagina y esperar que cargue https://lazo-interview.onrender.com.
+> Si quieres probar esto en produccion la app esta deployanda en un server gratis primero entrar a esta pagina y esperar que cargue <https://lazo-interview.onrender.com>.
 
-## Instrucciones.
+## Instrucciones
 
 1. Se necesitan las siguientes variables:
 
@@ -28,7 +28,7 @@ curl -X GET https://lazo-interview.onrender.com/audit
 
 4. Esto creará un issue en GitHub:
 
-https://github.com/arturxdev/lazo-interview/issues
+<https://github.com/arturxdev/lazo-interview/issues>
 
 Nuestro SaaS con enfoque AI-First ayuda a los equipos financieros a detectar errores en reportes antes de que lleguen a instancias superiores. En muchos casos, los archivos de **Pérdidas y Ganancias (P&L)** y el **Balance General**, almacenados en un repositorio de GitHub (en formato Markdown o CSV), tienden a desincronizarse o contener inconsistencias contables.
 
